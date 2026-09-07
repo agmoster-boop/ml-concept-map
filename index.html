@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IT Console // Machine Learning Architecture Map</title>
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --panel-bg: #111827;
+            --border-color: #1f2937;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --font-mono: 'Consolas', 'Courier New', monospace;
+            
+            /* IT Matrix Palette */
+            --supervised-glow: #3b82f6;
+            --unsupervised-glow: #10b981;
+            --reinforcement-glow: #f59e0b;
+            --deep-glow: #8b5cf6;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            padding: 2rem 1rem;
+            line-height: 1.5;
+        }
+
+        /* Top Console Header */
+        header {
+            max-width: 1200px;
+            margin: 0 auto 2rem auto;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .sys-title h1 {
+            font-family: var(--font-mono);
+            font-size: 1.5rem;
+            letter-spacing: 1px;
+            color: #38bdf8;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sys-title p {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            font-family: var(--font-mono);
+        }
+
+        .status-badge {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            background: #064e3b;
+            color: #34d399;
+            padding: 4px 10px;
+            border-radius: 4px;
+            border: 1px solid #059669;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #34d399;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 8px #34d399;
+        }
+
+        /* Grid System */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .category-card {
+            background-color: var(--panel-bg);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .card-header {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        .card-header h2 {
+            font-family: var(--font-mono);
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .card-header p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+        }
+
+        /* Custom Accents per Node */
+        .supervised { border-top: 3px solid var(--supervised-glow); }
+        .supervised .card-header h2 { color: var(--supervised-glow); }
+
+        .unsupervised { border-top: 3px solid var(--unsupervised-glow); }
+        .unsupervised .card-header h2 { color: var(--unsupervised-glow); }
+
+        .reinforcement { border-top: 3px solid var(--reinforcement-glow); }
+        .reinforcement .card-header h2 { color: var(--reinforcement-glow); }
+
+        .deep-learning { border-top: 3px solid var(--deep-glow); }
+        .deep-learning .card-header h2 { color: var(--deep-glow); }
+
+        .card-body {
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .section-title {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .app-badge {
+            background-color: #030712;
+            border: 1px solid var(--border-color);
+            padding: 0.6rem 0.8rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-family: var(--font-mono);
+            color: #e5e7eb;
+        }
+
+        .algorithm-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .algo-item {
+            border: 1px solid var(--border-color);
+            background: #030712;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .algo-header {
+            width: 100%;
+            background: none;
+            border: none;
+            padding: 0.6rem 0.8rem;
+            text-align: left;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--text-main);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .algo-header:hover {
+            background-color: #1f2937;
+        }
+
+        .chevron {
+            transition: transform 0.2s ease;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .algo-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background-color: #111827;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .algo-item.active .algo-content {
+            max-height: 350px;
+            padding: 0.75rem 0.8rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .algo-item.active .chevron {
+            transform: rotate(180deg);
+        }
+
+        .algo-content p {
+            margin-bottom: 0.5rem;
+        }
+
+        .algo-content p:last-child {
+            margin-bottom: 0;
+        }
+
+        .highlight {
+            color: #f3f4f6;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="sys-title">
+            <h1>SYS://ML_MAP_V1.0</h1>
+            <p>Machine Learning Architecture & Algorithm Registry</p>
+        </div>
+        <div class="status-badge">
+            <span class="status-dot"></span> SYSTEM_ONLINE
+        </div>
+    </header>
+
+    <main class="grid-container">
+
+        <!-- SUPERVISED LEARNING -->
+        <div class="category-card supervised">
+            <div class="card-header">
+                <h2>NODE_01 // SUPERVISED</h2>
+                <p>TARGET: LABELED_DATA</p>
+            </div>
+            <div class="card-body">
+                <div>
+                    <div class="section-title">> DEPLOYED_USE_CASE</div>
+                    <div class="app-badge">Email Spam Detection</div>
+                </div>
+                <div>
+                    <div class="section-title">> ALGORITHM_MODULES</div>
+                    <div class="algorithm-list">
+                        
+                        <div class="algo-item">
+                            <button class="algo-header">
+                                k-Nearest Neighbors (k-NN)
+                                <span class="chevron">▼</span>
+                            </button>
+                            <div class="algo-content">
+                                <p><span class="highlight">Mechanism:</span> Classifies new data points based on the majority vote of their k nearest data points using distance metrics like Euclidean distance.</p>
+                                <p><span class="highlight">Strengths:</span> Non-parametric, intuitive, simple to implement, and requires no explicit training phase (lazy learning).</p>
+                                <p><span class="highlight">Use Cases:</span> Credit risk scoring, handwriting recognition, and basic recommendation engines.</p>
+                            </div>
+                        </div>
+
+                        <div class="algo-item">
+                            <button class="algo-header">
+                                Linear Regression
+                                <span class="chevron">▼</span>
+                            </button>
+                            <div class="algo-content">
+                                <p><span class="highlight">Mechanism:</span> Models the relationship between a continuous dependent variable and one or more independent variables by fitting a linear equation to the observed data.</p>
+                                <p><span class="highlight">Strengths:</span> Highly transparent and interpretable, computationally efficient, fast to train, and works well on linearly separable trends.</p>
+                                <p><span class="highlight">Use Cases:</span> Real estate price prediction, stock trend forecasting, and sales volume estimation.</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- UNSUPERVISED LEARNING -->
+        <div class="category-card unsupervised">
+            <div class="card-header">
+                <h2>NODE_02 // UNSUPERVISED</h2>
+                <p>TARGET: UNLABELED_STRUCTURES</p>
+            </div>
+            <div class="card-body">
+                <div>
+                    <div class="section-title">> DEPLOYED_USE_CASE</div>
+                    <div class="app-badge">Customer Segmentation</div>
+                </div>
+                <div>
+                    <div class="section-title">> ALGORITHM_MODULES</div>
+                    <div class="algorithm-list">
+
+                        <div class="algo-item">
+                            <button class="algo-header">
+                                K-Means Clustering
+                                <span class="chevron">▼</span>
+                            </button>
+                            <div class="algo-content">
+                                <p><span class="highlight">Mechanism:</span> Partitioning algorithm that divides unlabeled data points into K distinct clusters by minimizing the distance between data points and their cluster centroids.</p>
+                                <p><span class="highlight">Strengths:</span> Highly scalable to large datasets, fast convergence speed, and simple to compute.</p>
+                                <p><span class="highlight">Use Cases:</span> Customer demographic segmentation, document categorization, and image quantization.</p>
+                            </div>
+                        </div>
+
+                        <div class="algo-item">
+                            <button class="algo-header">
+                                Principal Component Analysis (PCA)
+                                <span class="chevron">▼</span>
+                            </button>
+                            <div class="algo-content">
+                                <p><span class="highlight">Mechanism:</span> A dimensionality reduction technique that transforms a high-dimensional feature set into a smaller set of orthogonal axes (principal components) that capture maximum variance.</p>
+                                <p><span class="highlight">Strengths:</span> Eliminates redundant/correlated features, reduces model training time, and filters out dataset noise.</p>
+                                <p><span class="highlight">Use Cases:</span> High-dimensional data visualization, data compression, and feature preprocessing for complex models.</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- REINFORCEMENT LEARNING -->
+        <div class="category-card reinforcement">
+            <div class="card-header">
+                <h2>NODE_03 // REINFORCEMENT</h2>
+                <p>TARGET: REWARD_OPTIMIZATION</p>
+            </div>
+            <div class="card-body">
+                <div>
+                    <div class="section-title">> DEPLOYED_USE_CASE</div>
+                    <div class="app-badge">Autonomous Robotics</div>
+                </div>
+                <div>
+                    <div class="section-title">> ALGORITHM_MODULES</div>
+                    <div class="algorithm-list">
+
+                        <div class="algo-item">
+                            <button class="algo-header">
+                                Q-Learning
+                                <span class="chevron">▼</span>
+                            </button>
+                            <div class="algo-content">
+                                <p><span class="highlight">Mechanism:</span> A model-free algorithm that builds a lookup table (Q-table) to evaluate the expected utility of taking specific actions in given environmental states.</p>
+                                <p><span class="highlight">Strengths:</span> Does not require a pre-built mathematical model of the environment and guarantees convergence to optimal policies in finite state spaces.</p>
+                                <p><span class="highlight">Use Cases:</span> Strategic game-playing AI, dynamic traffic signal management, and grid navigation.</p>
+                            </div>
+                        </div>
+
+                        <div class="algo-item">
+                            <button class="algo-header">
+                                Deep Q-Networks (DQN)
+                                <span class="chevron">▼</span>
+                            </button>
+                            <div class="algo-content">
+                                <p><span class="highlight">Mechanism:</span> Combines Q-Learning with Deep Neural Networks to approximate Q-values rather than using a lookup table.</p>
+                                <p><span class="highlight">Strengths:</span> Capable of handling massive, continuous, or high-dimensional state spaces where lookup tables become computationally impossible.</p>
+                                <p><span class="highlight">Use Cases:</span> Autonomous vehicle control, robotic manipulation, and complex video game strategy.</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DEEP LEARNING -->
+        <div class="category-card deep-learning">
+            <div class="card-header">
+                <h2>NODE_04 // DEEP_LEARNING</h2>
+                <p>TARGET: NEURAL_NETWORKS</p>
+            </div>
+            <div class="card-body">
+                <div>
+                    <div class="section-title">> DEPLOYED_USE_CASE</div>
+                    <div class="app-badge">Medical Image Diagnostics</div>
+                </div>
+                <div>
+                    <div class="section-title">> ALGORITHM_MODULES</div>
+                    <div class="algorithm-list">
+
+                        <div class="algo-item">
+                            <button class="algo-header">
+                                Convolutional Neural Networks (CNNs)
+                                <span class="chevron">▼</span>
+                            </button>
+                            <div class="algo-content">
+                                <p><span class="highlight">Mechanism:</span> Utilizes specialized spatial matrix kernels (filters) to perform convolutions over input data to extract hierarchical spatial features.</p>
+                                <p><span class="highlight">Strengths:</span> Automatically extracts spatial visual patterns without manual feature engineering; translation invariant.</p>
+                                <p><span class="highlight">Use Cases:</span> Medical imaging anomaly detection (X-Rays/MRIs), facial recognition, and visual quality inspection.</p>
+                            </div>
+                        </div>
+
+                        <div class="algo-item">
+                            <button class="algo-header">
+                                Transformers
+                                <span class="chevron">▼</span>
+                            </button>
+                            <div class="algo-content">
+                                <p><span class="highlight">Mechanism:</span> Employs multi-head self-attention mechanisms to evaluate relationships across an entire sequence concurrently rather than processing step-by-step.</p>
+                                <p><span class="highlight">Strengths:</span> Handles long-range dependencies efficiently and allows massive parallel training on modern hardware.</p>
+                                <p><span class="highlight">Use Cases:</span> Large Language Models (LLMs), neural machine translation, and automated code generation.</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        document.querySelectorAll('.algo-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const item = header.parentElement;
+                item.classList.toggle('active');
+            });
+        });
+    </script>
+</body>
+</html>
